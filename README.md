@@ -6,3 +6,7 @@
 
 * 添加GitHub Actions自动构建配置文件 [build.yml](.github/workflows/build.yml) ，可自行参考本地源码打包构建apk文件
 * GitHub Actions自动化构建推送至 [releases](https://github.com/xautlx/TVBoxOSC/releases)
+
+播放源获取：
+
+* 关注公众号"一点小助手"后访问"TVBox"菜单
