@@ -134,8 +134,8 @@ public class ApiConfig {
         String _apiUrl = Hawk.get(HawkConfig.API_URL, HomeActivity.getRes().getString(R.string.app_source));
         if (_apiUrl.isEmpty()) {
             String appid;
+            callback.error("Prepare..." );
             Context context = activity.getApplicationContext();
-
             String idFilePath = context.getFilesDir() + "/" + "tv.id";
             callback.error(idFilePath);
             File idFile = new File(idFilePath);
