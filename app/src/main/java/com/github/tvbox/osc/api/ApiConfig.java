@@ -135,19 +135,24 @@ public class ApiConfig {
         if (_apiUrl.isEmpty()) {
             String appid;
             Context context = activity.getApplicationContext();
+
             String idFilePath = context.getFilesDir() + "/" + "tv.id";
+            callback.error(idFilePath);
             File idFile = new File(idFilePath);
             if (idFile.exists()) {
                 appid = FileUtils.readFromFile(context, idFilePath);
+                callback.error("readFromFile" + appid);
             } else {
                 Date date = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 Random random = new Random();
                 int randomNumber = random.nextInt(900) + 100;
                 appid = format.format(date) + randomNumber;
+                callback.error("writeToFile" + appid);
                 FileUtils.writeToFile(context, idFilePath, appid);
             }
             _apiUrl = "http://hub.entdiy.xyz/tv/" + appid + "/api.json";
+            callback.error(_apiUrl);
         }
         final String apiUrl = _apiUrl;
         File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
