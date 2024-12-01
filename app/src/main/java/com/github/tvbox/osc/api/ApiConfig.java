@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.api;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -41,11 +42,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,6 +72,8 @@ public class ApiConfig {
     private final String userAgent = "okhttp/3.15";
 
     private final String requestAccept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+
+    public final String CFG_FILE = "tvbox.cfg";
 
     private ApiConfig() {
         sourceBeanList = new LinkedHashMap<>();
@@ -131,11 +131,25 @@ public class ApiConfig {
 
     public void loadConfig(boolean useCache, LoadConfigCallback callback, Activity activity) {
         // Embedded Source : Update in Strings.xml if required
-        String apiUrl = Hawk.get(HawkConfig.API_URL, HomeActivity.getRes().getString(R.string.app_source));
-        if (apiUrl.isEmpty()) {
-            callback.error("源地址为空");
-            return;
+        String _apiUrl = Hawk.get(HawkConfig.API_URL, HomeActivity.getRes().getString(R.string.app_source));
+        if (_apiUrl.isEmpty()) {
+            String appid;
+            Context context = activity.getApplicationContext();
+            String idFilePath = context.getFilesDir() + "tv.id";
+            File idFile = new File(idFilePath);
+            if (idFile.exists()) {
+                appid = FileUtils.readFromFile(context, idFilePath);
+            } else {
+                Date date = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                Random random = new Random();
+                int randomNumber = random.nextInt(900) + 100;
+                appid = format.format(date) + randomNumber;
+                FileUtils.writeToFile(context, idFilePath, appid);
+            }
+            _apiUrl = "http://hub.entdiy.xyz/tv/" + appid + "/api.json";
         }
+        final String apiUrl = _apiUrl;
         File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
         if (useCache && cache.exists()) {
             try {
@@ -381,7 +395,7 @@ public class ApiConfig {
         // takagen99: Check if Live URL is setup in Settings, if no, get from File Config
         liveChannelGroupList.clear();           //修复从后台切换重复加载频道列表
         String liveURL = Hawk.get(HawkConfig.LIVE_URL, "");
-        String epgURL  = Hawk.get(HawkConfig.EPG_URL, "");
+        String epgURL = Hawk.get(HawkConfig.EPG_URL, "");
 
         String liveURL_final = null;
         try {
@@ -507,7 +521,7 @@ public class ApiConfig {
         // Video parse rule for host
         if (infoJson.has("rules")) {
             VideoParseRuler.clearRule();
-            for(JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
+            for (JsonElement oneHostRule : infoJson.getAsJsonArray("rules")) {
                 JsonObject obj = (JsonObject) oneHostRule;
                 if (obj.has("host")) {
                     String host = obj.get("host").getAsString();
