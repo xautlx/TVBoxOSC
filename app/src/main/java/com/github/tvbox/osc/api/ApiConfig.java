@@ -133,21 +133,13 @@ public class ApiConfig {
         // Embedded Source : Update in Strings.xml if required
         String _apiUrl = Hawk.get(HawkConfig.API_URL, HomeActivity.getRes().getString(R.string.app_source));
         if (_apiUrl.isEmpty()) {
-            String appid;
-            Context context = activity.getApplicationContext();
-            String idFilePath = context.getFilesDir() + "tv.id";
-            File idFile = new File(idFilePath);
-            if (idFile.exists()) {
-                appid = FileUtils.readFromFile(context, idFilePath);
-            } else {
-                Date date = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                Random random = new Random();
-                int randomNumber = random.nextInt(900) + 100;
-                appid = format.format(date) + randomNumber;
-                FileUtils.writeToFile(context, idFilePath, appid);
-            }
+            Date date = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            Random random = new Random();
+            int randomNumber = random.nextInt(900) + 100;
+            String appid = format.format(date) + randomNumber;
             _apiUrl = "http://hub.entdiy.xyz/tv/" + appid + "/api.json";
+            Hawk.put(HawkConfig.API_URL, _apiUrl);
         }
         final String apiUrl = _apiUrl;
         File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
