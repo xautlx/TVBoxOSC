@@ -133,17 +133,17 @@ public class ApiConfig {
         String appid = "12345678900";
         try {
             Context context = activity.getApplicationContext();
-            String idFilePath = context.getFilesDir() + "/" + "tv.id";
-            File idFile = new File(idFilePath);
+            String fileName = "tv.id";
+            File idFile = context.getFileStreamPath(fileName);
             if (idFile.exists()) {
-                appid = FileUtils.readFromFile(context, idFilePath);
+                appid = FileUtils.readFromFile(context, fileName);
             } else {
                 Date date = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 Random random = new Random();
                 int randomNumber = random.nextInt(900) + 100;
                 appid = format.format(date) + randomNumber;
-                FileUtils.writeToFile(context, idFilePath, appid);
+                FileUtils.writeToFile(context, fileName, appid);
             }
         } catch (Exception e) {
             StackTraceElement[] stackTrace = e.getStackTrace();
@@ -166,6 +166,7 @@ public class ApiConfig {
         String _apiUrl = Hawk.get(HawkConfig.API_URL, HomeActivity.getRes().getString(R.string.app_source));
         if (_apiUrl.isEmpty()) {
             _apiUrl = initApiUrl(callback, activity);
+            Hawk.put(HawkConfig.API_URL, _apiUrl);
         }
         final String apiUrl = _apiUrl;
         File cache = new File(App.getInstance().getFilesDir().getAbsolutePath() + "/" + MD5.encode(apiUrl));
