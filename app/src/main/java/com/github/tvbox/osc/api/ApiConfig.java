@@ -130,7 +130,7 @@ public class ApiConfig {
     }
 
     private String initApiUrl(LoadConfigCallback callback, Activity activity) {
-        String appid = "12345678900";
+        String appid = "19999999999";
         try {
             Context context = activity.getApplicationContext();
             String fileName = "tv.id";
@@ -146,13 +146,13 @@ public class ApiConfig {
                 FileUtils.writeToFile(context, fileName, appid);
             }
         } catch (Exception e) {
-            StackTraceElement[] stackTrace = e.getStackTrace();
-            StringBuilder stackTraceStr = new StringBuilder();
-            for (StackTraceElement element : stackTrace) {
-                stackTraceStr.append(element.toString()).append("\n");
-            }
-            String detailedText = stackTraceStr.toString();
-            callback.error(detailedText);
+//            StackTraceElement[] stackTrace = e.getStackTrace();
+//            StringBuilder stackTraceStr = new StringBuilder();
+//            for (StackTraceElement element : stackTrace) {
+//                stackTraceStr.append(element.toString()).append("\n");
+//            }
+//            String detailedText = stackTraceStr.toString();
+            callback.error("播放源处理异常");
         }
         return "http://hub.entdiy.xyz/tv/" + appid + "/api.json";
     }
