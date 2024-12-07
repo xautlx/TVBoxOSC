@@ -3,6 +3,9 @@ package com.github.tvbox.osc.api;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -133,18 +136,11 @@ public class ApiConfig {
         String appid = "19999999999";
         try {
             Context context = activity.getApplicationContext();
-            String fileName = "tv.id";
-            File idFile = context.getFileStreamPath(fileName);
-            if (idFile.exists()) {
-                appid = FileUtils.readFromFile(context, fileName);
-            } else {
-                Date date = new Date();
-                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                Random random = new Random();
-                int randomNumber = random.nextInt(900) + 100;
-                appid = format.format(date) + randomNumber;
-                FileUtils.writeToFile(context, fileName, appid);
-            }
+            String serialNumber = Build.SERIAL;
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            String macAddress = wifiManager.getConnectionInfo().getMacAddress();
+            String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            appid = MD5.encode(serialNumber + macAddress + androidId).toLowerCase();
         } catch (Exception e) {
 //            StackTraceElement[] stackTrace = e.getStackTrace();
 //            StringBuilder stackTraceStr = new StringBuilder();
