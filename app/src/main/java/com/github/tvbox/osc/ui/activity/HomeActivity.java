@@ -295,6 +295,8 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
+        // 为了避免误删除应用，应用操作入口隐藏
+        tvDraw.setVisibility(View.GONE);
         // Button : Drawer >> To go into App Drawer -------------------
         tvDraw.setOnClickListener(new View.OnClickListener() {
             @Override
